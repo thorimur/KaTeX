@@ -91,6 +91,21 @@ function createConfig(target /*: Target */, dev /*: boolean */,
         });
     }
 
+    // inline fonts into the CSS files if the environment variable
+    // BUNDLE_FONTS is true
+    const fontFilesRule = process.env["BUNDLE_FONTS"] === "true" ?
+    {
+        test: /\.(ttf|woff|woff2)$/,
+        type: 'asset/inline',
+    } :
+    {
+        test: /\.(ttf|woff|woff2)$/,
+        type: 'asset/resource',
+        generator: {
+            filename: 'fonts/[name][ext][query]',
+        },
+    };
+
     return {
         mode: dev ? 'development' : 'production',
         context: __dirname,
@@ -134,13 +149,7 @@ function createConfig(target /*: Target */, dev /*: boolean */,
                         },
                     ],
                 },
-                {
-                    test: /\.(ttf|woff|woff2)$/,
-                    type: 'asset/resource',
-                    generator: {
-                        filename: 'fonts/[name][ext][query]',
-                    },
-                },
+                fontFilesRule,
             ],
         },
         externals: 'katex',
